@@ -10,16 +10,18 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "locale")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class Locale {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String name;
+   private String city;
 
+   private String state;
 }
