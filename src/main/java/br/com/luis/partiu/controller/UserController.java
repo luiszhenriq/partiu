@@ -39,12 +39,17 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<UserResponseDto>> getAll() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/gender")
-    public ResponseEntity<List<User>> getByGender(@RequestParam("gender") Gender gender) {
+    public ResponseEntity<List<UserResponseDto>> getByGender(@RequestParam("gender") Gender gender) {
         return new ResponseEntity<>(service.getByGender(gender), HttpStatus.OK);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<UserResponseDto> getById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
 }

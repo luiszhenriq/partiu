@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -44,14 +45,40 @@ public class UserService {
 
     }
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
+    public List<UserResponseDto> getAllUsers() {
+        List<User> userList = repository.findAll();
+
+        return userList.stream().map(user -> new UserResponseDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getAvatarUrl(),
+                        user.getGender()
+                ))
+                .collect(Collectors.toList());
     }
 
-    public List<User> getByGender(Gender gender) {
+    public List<UserResponseDto> getByGender(Gender gender) {
         List<User> users = repository.findByGender(gender);
 
-        return users;
+        return users.stream().map(user -> new UserResponseDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getAvatarUrl(),
+                        user.getGender()
+                ))
+                .collect(Collectors.toList());
     }
 
+    public UserResponseDto getById(UUID id) {
+        User user = repository.findById(id).
+                orElseThrow(() -> new RuntimeException("Id não encontrado"));
+
+        return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
+                user.getAvatarUrl(),user.getGender());
+
+    }
 }
