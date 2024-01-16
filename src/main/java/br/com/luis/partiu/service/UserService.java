@@ -4,11 +4,13 @@ package br.com.luis.partiu.service;
 import br.com.luis.partiu.dto.user.UserRegisterDto;
 import br.com.luis.partiu.dto.user.UserResponseDto;
 import br.com.luis.partiu.dto.user.UserUpdateDto;
+import br.com.luis.partiu.models.Gender;
 import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -40,6 +42,16 @@ public class UserService {
         return new UserResponseDto(updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(), updatedUser.getPassword(),
                 updatedUser.getAvatarUrl(),updatedUser.getGender());
 
+    }
+
+    public List<User> getAllUsers() {
+        return repository.findAll();
+    }
+
+    public List<User> getByGender(Gender gender) {
+        List<User> users = repository.findByGender(gender);
+
+        return users;
     }
 
 }
