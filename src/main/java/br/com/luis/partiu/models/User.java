@@ -1,6 +1,7 @@
 package br.com.luis.partiu.models;
 
 
+import br.com.luis.partiu.dto.user.UserRegisterDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class User {
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -33,4 +35,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    public User(UserRegisterDto userRegisterDto) {
+        this.name = userRegisterDto.name();
+        this.email = userRegisterDto.email();
+        this.password = userRegisterDto.password();
+        this.avatarUrl = userRegisterDto.avatarUrl();
+        this.gender = userRegisterDto.gender();
+
+    }
 }
