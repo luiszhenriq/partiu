@@ -81,4 +81,9 @@ public class UserService {
 
         return new PageImpl<>(userList, pageable, userPage.getTotalElements());
     }
+
+
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
+    }
 }

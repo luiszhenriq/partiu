@@ -1,6 +1,7 @@
 package br.com.luis.partiu.models;
 
 
+import br.com.luis.partiu.dto.event.EventRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,4 +37,13 @@ public class Event {
     private LocalDateTime endsIn;
 
     private Integer fee;
+
+    public Event(EventRequestDto eventDto) {
+        this.title = eventDto.title();
+        this.description = eventDto.description();
+        this.coverUrl = eventDto.coverUrl();
+        this.startAt = eventDto.startAt();
+        this.endsIn = eventDto.endsIn();
+        this.fee = eventDto.fee();
+    }
 }

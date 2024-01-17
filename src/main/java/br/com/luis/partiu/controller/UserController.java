@@ -54,4 +54,10 @@ public class UserController {
     public ResponseEntity<UserResponseDto> getById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity deleteById(@PathVariable("id") UUID id) {
+        service.deleteById(id);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 }
