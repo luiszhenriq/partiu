@@ -9,6 +9,8 @@ import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,13 +41,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAll() {
-        return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<Page<UserResponseDto>> getAll(Pageable pageable) {
+        return new ResponseEntity<>(service.getAllUsers(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/gender")
-    public ResponseEntity<List<UserResponseDto>> getByGender(@RequestParam("gender") Gender gender) {
-        return new ResponseEntity<>(service.getByGender(gender), HttpStatus.OK);
+    public ResponseEntity<Page<UserResponseDto>> getByGender(@RequestParam("gender") Gender gender, Pageable pageable) {
+        return new ResponseEntity<>(service.getByGender(gender, pageable), HttpStatus.OK);
     }
 
     @GetMapping("{id}")

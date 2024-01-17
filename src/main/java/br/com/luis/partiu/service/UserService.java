@@ -8,6 +8,9 @@ import br.com.luis.partiu.models.Gender;
 import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,32 +48,14 @@ public class UserService {
 
     }
 
-    public List<UserResponseDto> getAllUsers() {
-        List<User> userList = repository.findAll();
-
-        return userList.stream().map(user -> new UserResponseDto(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.getAvatarUrl(),
-                        user.getGender()
-                ))
-                .collect(Collectors.toList());
+    public Page<UserResponseDto> getAllUsers(Pageable pageable) {
+        Page<User> userPage = repository.findAll(pageable);
+        return mapUserPage(userPage, pageable);
     }
 
-    public List<UserResponseDto> getByGender(Gender gender) {
-        List<User> users = repository.findByGender(gender);
-
-        return users.stream().map(user -> new UserResponseDto(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.getAvatarUrl(),
-                        user.getGender()
-                ))
-                .collect(Collectors.toList());
+    public Page<UserResponseDto> getByGender(Gender gender, Pageable pageable) {
+        Page<User> userPage = repository.findByGender(gender, pageable);
+        return mapUserPage(userPage, pageable);
     }
 
     public UserResponseDto getById(UUID id) {
@@ -80,5 +65,20 @@ public class UserService {
         return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
                 user.getAvatarUrl(),user.getGender());
 
+    }
+
+    private Page<UserResponseDto> mapUserPage(Page<User> userPage, Pageable pageable) {
+        List<UserResponseDto> userList = userPage.getContent().stream()
+                .map(user -> new UserResponseDto(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getPassword(),
+                        user.getAvatarUrl(),
+                        user.getGender()
+                ))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(userList, pageable, userPage.getTotalElements());
     }
 }
