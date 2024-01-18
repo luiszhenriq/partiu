@@ -83,4 +83,23 @@ public class EventService {
                 updatedEvent.getEndsIn().format(formatter),
                 updatedEvent.getFee());
     }
+
+
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
+    }
+
+    public EventResponseDto getById(UUID id) {
+        Event event = repository.findById(id).
+                orElseThrow(()-> new RuntimeException("Id não foi encontrado"));
+
+        return new EventResponseDto(event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getCoverUrl(),
+                event.getStartAt().format(formatter),
+                event.getEndsIn().format(formatter),
+                event.getFee());
+
+    }
 }

@@ -35,9 +35,20 @@ public class EventController {
         return new ResponseEntity<>(service.getAllEvents(pageable), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EventResponseDto> getById(@PathVariable("id") UUID id) {
+        return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<EventResponseDto> updateEvent(@PathVariable("id") UUID id, @RequestBody UpdateEventDto updateEventDto) {
         return new ResponseEntity<>(service.updateEvent(id, updateEventDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") UUID id) {
+        service.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
