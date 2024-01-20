@@ -1,6 +1,7 @@
 package br.com.luis.partiu.models;
 
 
+import br.com.luis.partiu.dto.locale.LocaleRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,4 +25,9 @@ public class Locale {
    private String city;
 
    private String state;
+
+    public Locale(LocaleRequestDto localeDto) {
+        this.city = localeDto.city();
+        this.state = localeDto.state();
+    }
 }
