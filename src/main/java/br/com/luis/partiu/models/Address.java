@@ -28,4 +28,8 @@ public class Address {
     private String zipCode;
 
     private String ref;
+
+    @OneToOne
+    private Event event;
+
 }

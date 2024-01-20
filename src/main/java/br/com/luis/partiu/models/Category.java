@@ -1,6 +1,7 @@
 package br.com.luis.partiu.models;
 
 
+import br.com.luis.partiu.dto.category.CategoryRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +23,7 @@ public class Category {
 
     private String name;
 
+    public Category(CategoryRequestDto categoryDto) {
+        this.name = categoryDto.name();
+    }
 }

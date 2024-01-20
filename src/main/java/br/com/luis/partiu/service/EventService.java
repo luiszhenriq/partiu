@@ -1,11 +1,11 @@
 package br.com.luis.partiu.service;
-
-
 import br.com.luis.partiu.dto.event.EventRequestDto;
 import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
 import br.com.luis.partiu.models.Event;
+import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.repositories.EventRepository;
+import br.com.luis.partiu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -24,12 +24,23 @@ public class EventService {
     @Autowired
     private EventRepository repository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     public EventResponseDto createEvent(EventRequestDto eventDto) {
 
+        User author = userRepository.findById(eventDto.authorId())
+                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+
+
         Event newEvent = new Event(eventDto);
+
+        newEvent.setAuthor(author);
 
         Event saveEvent = repository.save(newEvent);
 
@@ -40,7 +51,9 @@ public class EventService {
                 saveEvent.getCoverUrl(),
                 saveEvent.getStartAt().format(formatter),
                 saveEvent.getEndsIn().format(formatter),
-                saveEvent.getFee());
+                saveEvent.getFee(),
+                saveEvent.getAuthor()
+                );
     }
 
    public Page<EventResponseDto> getAllEvents(Pageable pageable) {
@@ -54,7 +67,8 @@ public class EventService {
                         event.getCoverUrl(),
                         event.getStartAt().format(formatter),
                         event.getEndsIn().format(formatter),
-                        event.getFee()
+                        event.getFee(),
+                        event.getAuthor()
                 ))
                 .collect(Collectors.toList());
 
@@ -81,7 +95,9 @@ public class EventService {
                 updatedEvent.getCoverUrl(),
                 updatedEvent.getStartAt().format(formatter),
                 updatedEvent.getEndsIn().format(formatter),
-                updatedEvent.getFee());
+                updatedEvent.getFee(),
+                updatedEvent.getAuthor()
+        );
     }
 
 
@@ -99,7 +115,9 @@ public class EventService {
                 event.getCoverUrl(),
                 event.getStartAt().format(formatter),
                 event.getEndsIn().format(formatter),
-                event.getFee());
+                event.getFee(),
+                event.getAuthor()
+               );
 
     }
 }

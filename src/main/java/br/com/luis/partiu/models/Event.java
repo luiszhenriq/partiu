@@ -38,6 +38,23 @@ public class Event {
 
     private Integer fee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
+
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "event", fetch = FetchType.EAGER)
+    private Address address;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "locale_id")
+    private Locale locale;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
     public Event(EventRequestDto eventDto) {
         this.title = eventDto.title();
         this.description = eventDto.description();
@@ -46,4 +63,5 @@ public class Event {
         this.endsIn = eventDto.endsIn();
         this.fee = eventDto.fee();
     }
+
 }
