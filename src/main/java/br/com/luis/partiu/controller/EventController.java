@@ -46,6 +46,11 @@ public class EventController {
         return new ResponseEntity<>(service.getEventByCity(city), HttpStatus.OK);
     }
 
+    @GetMapping("/state")
+    public ResponseEntity<List<EventResponseDto>> getEventByState(@RequestParam("state") String state) {
+        return new ResponseEntity<>(service.getEventByState(state), HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<EventResponseDto> updateEvent(@PathVariable("id") UUID id, @RequestBody UpdateEventDto updateEventDto) {

@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
     List<Event> findByLocaleCity(String city);
+
+    List<Event> findByLocaleState(String state);
 }

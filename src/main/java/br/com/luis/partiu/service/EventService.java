@@ -62,35 +62,14 @@ public class EventService {
 
         Event saveEvent = repository.save(newEvent);
 
-        return new  EventResponseDto(saveEvent.getId(),
-                saveEvent.getTitle(),
-                saveEvent.getDescription(),
-                saveEvent.getCoverUrl(),
-                saveEvent.getStartAt().format(formatter),
-                saveEvent.getEndsIn().format(formatter),
-                saveEvent.getFee(),
-                saveEvent.getAuthor(),
-                saveEvent.getLocale(),
-                saveEvent.getCategory()
-                );
+        return eventResponseDto(saveEvent);
     }
 
    public Page<EventResponseDto> getAllEvents(Pageable pageable) {
         Page<Event> eventPage = repository.findAll(pageable);
 
         List<EventResponseDto> eventList = eventPage.getContent().stream()
-                .map(event -> new EventResponseDto(
-                        event.getId(),
-                        event.getTitle(),
-                        event.getDescription(),
-                        event.getCoverUrl(),
-                        event.getStartAt().format(formatter),
-                        event.getEndsIn().format(formatter),
-                        event.getFee(),
-                        event.getAuthor(),
-                        event.getLocale(),
-                        event.getCategory()
-                ))
+                .map(this::eventResponseDto)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(eventList, pageable, eventPage.getTotalElements());
@@ -110,17 +89,7 @@ public class EventService {
 
         Event updatedEvent = repository.save(event);
 
-        return new  EventResponseDto(updatedEvent.getId(),
-                updatedEvent.getTitle(),
-                updatedEvent.getDescription(),
-                updatedEvent.getCoverUrl(),
-                updatedEvent.getStartAt().format(formatter),
-                updatedEvent.getEndsIn().format(formatter),
-                updatedEvent.getFee(),
-                updatedEvent.getAuthor(),
-                updatedEvent.getLocale(),
-                updatedEvent.getCategory()
-        );
+        return eventResponseDto(updatedEvent);
     }
 
 
@@ -132,6 +101,29 @@ public class EventService {
         Event event = repository.findById(id).
                 orElseThrow(()-> new RuntimeException("Id não foi encontrado"));
 
+        return eventResponseDto(event);
+
+    }
+
+    public List<EventResponseDto> getEventByCity(String city) {
+
+        return repository.findByLocaleCity(city)
+                .stream()
+                .map(this::eventResponseDto)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<EventResponseDto> getEventByState(String state) {
+
+        return repository.findByLocaleState(state)
+                .stream()
+                .map(this::eventResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    private EventResponseDto eventResponseDto(Event event) {
+
         return new EventResponseDto(event.getId(),
                 event.getTitle(),
                 event.getDescription(),
@@ -142,26 +134,6 @@ public class EventService {
                 event.getAuthor(),
                 event.getLocale(),
                 event.getCategory()
-               );
-
-    }
-
-    public List<EventResponseDto> getEventByCity(String city) {
-
-        return repository.findByLocaleCity(city)
-                .stream()
-                .map(event -> new EventResponseDto(
-                        event.getId(),
-                        event.getTitle(),
-                        event.getDescription(),
-                        event.getCoverUrl(),
-                        event.getStartAt().format(formatter),
-                        event.getEndsIn().format(formatter),
-                        event.getFee(),
-                        event.getAuthor(),
-                        event.getLocale(),
-                        event.getCategory()))
-                .collect(Collectors.toList());
-
+        );
     }
 }
