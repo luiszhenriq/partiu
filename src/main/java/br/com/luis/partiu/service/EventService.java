@@ -122,6 +122,14 @@ public class EventService {
                 .collect(Collectors.toList());
     }
 
+    public List<EventResponseDto> getEventByCategory(String name) {
+
+        return repository.findByCategoryName(name)
+                .stream()
+                .map(this::eventResponseDto)
+                .collect(Collectors.toList());
+    }
+
     private EventResponseDto eventResponseDto(Event event) {
 
         return new EventResponseDto(event.getId(),

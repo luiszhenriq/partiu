@@ -11,4 +11,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     List<Event> findByLocaleCity(String city);
 
     List<Event> findByLocaleState(String state);
+
+    List<Event> findByCategoryName(String name);
 }

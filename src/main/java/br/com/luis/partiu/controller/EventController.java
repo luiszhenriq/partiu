@@ -51,6 +51,11 @@ public class EventController {
         return new ResponseEntity<>(service.getEventByState(state), HttpStatus.OK);
     }
 
+    @GetMapping("/category/name")
+    public ResponseEntity<List<EventResponseDto>> getEventByCategory(@RequestParam("name") String name) {
+        return new ResponseEntity<>(service.getEventByCategory(name), HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<EventResponseDto> updateEvent(@PathVariable("id") UUID id, @RequestBody UpdateEventDto updateEventDto) {
