@@ -2,9 +2,13 @@ package br.com.luis.partiu.service;
 import br.com.luis.partiu.dto.event.EventRequestDto;
 import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
+import br.com.luis.partiu.models.Category;
 import br.com.luis.partiu.models.Event;
+import br.com.luis.partiu.models.Locale;
 import br.com.luis.partiu.models.User;
+import br.com.luis.partiu.repositories.CategoryRepository;
 import br.com.luis.partiu.repositories.EventRepository;
+import br.com.luis.partiu.repositories.LocaleRepository;
 import br.com.luis.partiu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +31,12 @@ public class EventService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LocaleRepository localeRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -37,13 +47,20 @@ public class EventService {
         User author = userRepository.findById(eventDto.authorId())
                 .orElseThrow(() -> new RuntimeException("Id não encontrado"));
 
+        Locale locale = localeRepository.findById(eventDto.localeId())
+                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+
+        Category category = categoryRepository.findById(eventDto.categoryId())
+                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+
 
         Event newEvent = new Event(eventDto);
 
         newEvent.setAuthor(author);
+        newEvent.setLocale(locale);
+        newEvent.setCategory(category);
 
         Event saveEvent = repository.save(newEvent);
-
 
         return new  EventResponseDto(saveEvent.getId(),
                 saveEvent.getTitle(),
@@ -52,7 +69,9 @@ public class EventService {
                 saveEvent.getStartAt().format(formatter),
                 saveEvent.getEndsIn().format(formatter),
                 saveEvent.getFee(),
-                saveEvent.getAuthor()
+                saveEvent.getAuthor(),
+                saveEvent.getLocale(),
+                saveEvent.getCategory()
                 );
     }
 
@@ -68,7 +87,9 @@ public class EventService {
                         event.getStartAt().format(formatter),
                         event.getEndsIn().format(formatter),
                         event.getFee(),
-                        event.getAuthor()
+                        event.getAuthor(),
+                        event.getLocale(),
+                        event.getCategory()
                 ))
                 .collect(Collectors.toList());
 
@@ -96,7 +117,9 @@ public class EventService {
                 updatedEvent.getStartAt().format(formatter),
                 updatedEvent.getEndsIn().format(formatter),
                 updatedEvent.getFee(),
-                updatedEvent.getAuthor()
+                updatedEvent.getAuthor(),
+                updatedEvent.getLocale(),
+                updatedEvent.getCategory()
         );
     }
 
@@ -116,8 +139,29 @@ public class EventService {
                 event.getStartAt().format(formatter),
                 event.getEndsIn().format(formatter),
                 event.getFee(),
-                event.getAuthor()
+                event.getAuthor(),
+                event.getLocale(),
+                event.getCategory()
                );
+
+    }
+
+    public List<EventResponseDto> getEventByCity(String city) {
+
+        return repository.findByLocaleCity(city)
+                .stream()
+                .map(event -> new EventResponseDto(
+                        event.getId(),
+                        event.getTitle(),
+                        event.getDescription(),
+                        event.getCoverUrl(),
+                        event.getStartAt().format(formatter),
+                        event.getEndsIn().format(formatter),
+                        event.getFee(),
+                        event.getAuthor(),
+                        event.getLocale(),
+                        event.getCategory()))
+                .collect(Collectors.toList());
 
     }
 }

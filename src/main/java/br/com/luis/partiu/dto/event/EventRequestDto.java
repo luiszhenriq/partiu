@@ -11,6 +11,8 @@ public record EventRequestDto(
         LocalDateTime startAt,
         LocalDateTime endsIn,
         Integer fee,
-        UUID authorId
+        UUID authorId,
+        UUID localeId,
+        UUID categoryId
         ) {
 }

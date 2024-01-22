@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -38,6 +39,11 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDto> getById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/city")
+    public ResponseEntity<List<EventResponseDto>> getEventByCity(@RequestParam("city") String city) {
+        return new ResponseEntity<>(service.getEventByCity(city), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
