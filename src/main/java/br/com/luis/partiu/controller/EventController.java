@@ -36,9 +36,15 @@ public class EventController {
         return new ResponseEntity<>(service.getAllEvents(pageable), HttpStatus.OK);
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDto> getById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/fee")
+    public ResponseEntity<Page<EventResponseDto>> getEventByFee(@RequestParam("fee") Integer fee, Pageable pageable) {
+        return new ResponseEntity<>(service.getEventByFee(fee, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/city")

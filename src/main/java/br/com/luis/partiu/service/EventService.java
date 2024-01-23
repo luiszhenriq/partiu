@@ -105,6 +105,17 @@ public class EventService {
 
     }
 
+    public Page<EventResponseDto> getEventByFee(Integer fee, Pageable pageable) {
+
+        Page<Event> eventFee = repository.findByFee(fee, pageable);
+
+        List<EventResponseDto> eventList = eventFee.getContent().stream()
+                .map(this::eventResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(eventList, pageable, eventFee.getTotalElements());
+    }
+
     public List<EventResponseDto> getEventByCity(String city) {
 
         return repository.findByLocaleCity(city)
