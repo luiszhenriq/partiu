@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,8 +31,13 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponseDto>> getAllEvents(Pageable pageable) {
-        return new ResponseEntity<>(service.getAllEvents(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<EventResponseDto>> getEvents(
+            Pageable pageable,
+            @RequestParam(name = "fee", required = false) Integer fee,
+            @RequestParam(name = "city", required = false) String city,
+            @RequestParam(name = "state", required = false) String state,
+            @RequestParam(name = "name", required = false) String name) {
+        return new ResponseEntity<>(service.getEvents(fee, city, state, name, pageable), HttpStatus.OK);
     }
 
 
@@ -42,25 +46,6 @@ public class EventController {
         return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/fee")
-    public ResponseEntity<Page<EventResponseDto>> getEventByFee(@RequestParam("fee") Integer fee, Pageable pageable) {
-        return new ResponseEntity<>(service.getEventByFee(fee, pageable), HttpStatus.OK);
-    }
-
-    @GetMapping("/city")
-    public ResponseEntity<List<EventResponseDto>> getEventByCity(@RequestParam("city") String city) {
-        return new ResponseEntity<>(service.getEventByCity(city), HttpStatus.OK);
-    }
-
-    @GetMapping("/state")
-    public ResponseEntity<List<EventResponseDto>> getEventByState(@RequestParam("state") String state) {
-        return new ResponseEntity<>(service.getEventByState(state), HttpStatus.OK);
-    }
-
-    @GetMapping("/category/name")
-    public ResponseEntity<List<EventResponseDto>> getEventByCategory(@RequestParam("name") String name) {
-        return new ResponseEntity<>(service.getEventByCategory(name), HttpStatus.OK);
-    }
 
     @PutMapping("/{id}")
     @Transactional

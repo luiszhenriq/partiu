@@ -65,14 +65,15 @@ public class EventService {
         return eventResponseDto(saveEvent);
     }
 
-   public Page<EventResponseDto> getAllEvents(Pageable pageable) {
-        Page<Event> eventPage = repository.findAll(pageable);
+    public Page<EventResponseDto> getEvents(
+            Integer fee,
+            String city,
+            String state,
+            String name,
+            Pageable pageable) {
+        Page<Event> eventPage = repository.findWithFilters(fee, city, state, name, pageable);
 
-        List<EventResponseDto> eventList = eventPage.getContent().stream()
-                .map(this::eventResponseDto)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(eventList, pageable, eventPage.getTotalElements());
+        return eventPage.map(this::eventResponseDto);
     }
 
     public EventResponseDto updateEvent(UUID id, UpdateEventDto updateEventDto) {
@@ -105,42 +106,6 @@ public class EventService {
 
     }
 
-    public Page<EventResponseDto> getEventByFee(Integer fee, Pageable pageable) {
-
-        Page<Event> eventFee = repository.findByFee(fee, pageable);
-
-        List<EventResponseDto> eventList = eventFee.getContent().stream()
-                .map(this::eventResponseDto)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(eventList, pageable, eventFee.getTotalElements());
-    }
-
-    public List<EventResponseDto> getEventByCity(String city) {
-
-        return repository.findByLocaleCity(city)
-                .stream()
-                .map(this::eventResponseDto)
-                .collect(Collectors.toList());
-
-    }
-
-    public List<EventResponseDto> getEventByState(String state) {
-
-        return repository.findByLocaleState(state)
-                .stream()
-                .map(this::eventResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<EventResponseDto> getEventByCategory(String name) {
-
-        return repository.findByCategoryName(name)
-                .stream()
-                .map(this::eventResponseDto)
-                .collect(Collectors.toList());
-    }
-
     private EventResponseDto eventResponseDto(Event event) {
 
         return new EventResponseDto(event.getId(),
@@ -155,4 +120,6 @@ public class EventService {
                 event.getCategory()
         );
     }
+
+
 }

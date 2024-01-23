@@ -4,18 +4,25 @@ import br.com.luis.partiu.models.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
-import java.util.List;
 import java.util.UUID;
 
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    List<Event> findByLocaleCity(String city);
+    @Query("SELECT e FROM Event e " +
+            "WHERE (:fee IS NULL OR e.fee = :fee) " +
+            "AND (:city IS NULL OR e.locale.city = :city) " +
+            "AND (:state IS NULL OR e.locale.state = :state) " +
+            "AND (:name IS NULL OR e.category.name = :name)")
+    Page<Event> findWithFilters(
+            @Param("fee") Integer fee,
+            @Param("city") String city,
+            @Param("state") String state,
+            @Param("name") String name,
+            Pageable pageable
+    );
 
-    List<Event> findByLocaleState(String state);
-
-    List<Event> findByCategoryName(String name);
-
-    Page<Event> findByFee(Integer fee, Pageable pageable);
 }
