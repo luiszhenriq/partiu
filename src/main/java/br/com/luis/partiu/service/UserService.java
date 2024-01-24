@@ -1,9 +1,11 @@
 package br.com.luis.partiu.service;
 
 
+import br.com.luis.partiu.dto.user.UserLoginRequestDto;
 import br.com.luis.partiu.dto.user.UserRegisterDto;
 import br.com.luis.partiu.dto.user.UserResponseDto;
 import br.com.luis.partiu.dto.user.UserUpdateDto;
+import br.com.luis.partiu.infra.TokenService;
 import br.com.luis.partiu.models.Gender;
 import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.repositories.UserRepository;
@@ -11,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,14 +30,36 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private AuthenticationManager manager;
+
+    @Autowired
+    private TokenService service;
+
     public UserResponseDto register(UserRegisterDto userRegisterDto) {
+
+    if (this.repository.findByEmail(userRegisterDto.email()) != null) {
+        throw new RuntimeException("Usuário ja cadastrado");
+    }
+
+        String encryptedPassword = new BCryptPasswordEncoder().encode(userRegisterDto.password());
 
         User newUser = new User(userRegisterDto);
 
+        newUser.setPassword(encryptedPassword);
+
         User savedUser = repository.save(newUser);
 
-        return new UserResponseDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail(), savedUser.getPassword(),
+        return new UserResponseDto(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
                 savedUser.getAvatarUrl(),savedUser.getGender());
+    }
+
+    public String login(UserLoginRequestDto userDto) {
+
+        var token = new UsernamePasswordAuthenticationToken(userDto.email(), userDto.password());
+        var auth = manager.authenticate(token);
+
+        return service.generateToken((User) auth.getPrincipal());
     }
 
     public UserResponseDto updateUser(UUID id, UserUpdateDto updateDto) {
@@ -43,7 +70,7 @@ public class UserService {
 
         User updatedUser = repository.save(user);
 
-        return new UserResponseDto(updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(), updatedUser.getPassword(),
+        return new UserResponseDto(updatedUser.getId(), updatedUser.getName(), updatedUser.getEmail(),
                 updatedUser.getAvatarUrl(),updatedUser.getGender());
 
     }
@@ -63,7 +90,7 @@ public class UserService {
                 orElseThrow(() -> new RuntimeException("Id não encontrado"));
 
         return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
-                user.getAvatarUrl(),user.getGender());
+                user.getGender());
 
     }
 
@@ -74,7 +101,6 @@ public class UserService {
                         user.getName(),
                         user.getEmail(),
                         user.getPassword(),
-                        user.getAvatarUrl(),
                         user.getGender()
                 ))
                 .collect(Collectors.toList());

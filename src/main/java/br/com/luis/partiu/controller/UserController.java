@@ -1,11 +1,12 @@
 package br.com.luis.partiu.controller;
 
 
+import br.com.luis.partiu.dto.user.UserLoginRequestDto;
 import br.com.luis.partiu.dto.user.UserRegisterDto;
 import br.com.luis.partiu.dto.user.UserResponseDto;
 import br.com.luis.partiu.dto.user.UserUpdateDto;
+import br.com.luis.partiu.infra.TokenJWT;
 import br.com.luis.partiu.models.Gender;
-import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -28,10 +28,18 @@ public class UserController {
     private UserService service;
 
 
-    @PostMapping
+
+    @PostMapping("/register")
     @Transactional
     public ResponseEntity<UserResponseDto> register(@RequestBody UserRegisterDto userRegisterDto) {
         return new ResponseEntity<>(service.register(userRegisterDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    @Transactional
+    public ResponseEntity<TokenJWT> login(@RequestBody UserLoginRequestDto userDto) {
+        String tokenJWT = service.login(userDto);
+        return ResponseEntity.ok(new TokenJWT(tokenJWT));
     }
 
     @PutMapping("/{id}")
