@@ -21,6 +21,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+
+    @Column(nullable = false)
     private String name;
 
     public Category(CategoryRequestDto categoryDto) {

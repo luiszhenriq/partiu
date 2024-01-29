@@ -1,25 +1,19 @@
 package br.com.luis.partiu.service;
+import br.com.luis.partiu.dto.address.AddressDto;
+import br.com.luis.partiu.dto.event.DateRangeRequest;
 import br.com.luis.partiu.dto.event.EventRequestDto;
 import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
-import br.com.luis.partiu.models.Category;
-import br.com.luis.partiu.models.Event;
-import br.com.luis.partiu.models.Locale;
-import br.com.luis.partiu.models.User;
-import br.com.luis.partiu.repositories.CategoryRepository;
-import br.com.luis.partiu.repositories.EventRepository;
-import br.com.luis.partiu.repositories.LocaleRepository;
-import br.com.luis.partiu.repositories.UserRepository;
+import br.com.luis.partiu.dto.user.UserViewDto;
+import br.com.luis.partiu.models.*;
+import br.com.luis.partiu.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -38,7 +32,6 @@ public class EventService {
     private CategoryRepository categoryRepository;
 
 
-
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
@@ -53,19 +46,22 @@ public class EventService {
         Category category = categoryRepository.findById(eventDto.categoryId())
                 .orElseThrow(() -> new RuntimeException("Id não encontrado"));
 
-
         Event newEvent = new Event(eventDto);
+
+        Address newAddress = new Address(eventDto.address());
 
         newEvent.setAuthor(author);
         newEvent.setLocale(locale);
         newEvent.setCategory(category);
+
+        newEvent.setAddress(newAddress);
 
         Event saveEvent = repository.save(newEvent);
 
         return eventResponseDto(saveEvent);
     }
 
-    public Page<EventResponseDto> getEvents(
+    public Page<EventResponseDto> getAllEventsOrWithFilters(
             Integer fee,
             String city,
             String state,
@@ -106,6 +102,14 @@ public class EventService {
 
     }
 
+    public Page<EventResponseDto> getEventsByDateRange(DateRangeRequest date, Pageable pageable) {
+
+        Page<Event> eventPage = repository.findEventsByDateRange(date.startAt(), date.endsIn(), pageable);
+
+        return eventPage.map(this::eventResponseDto);
+
+    }
+
     private EventResponseDto eventResponseDto(Event event) {
 
         return new EventResponseDto(event.getId(),
@@ -115,9 +119,15 @@ public class EventService {
                 event.getStartAt().format(formatter),
                 event.getEndsIn().format(formatter),
                 event.getFee(),
-                event.getAuthor(),
+                new UserViewDto(
+                        event.getAuthor().getId(),
+                        event.getAuthor().getName(),
+                        event.getAuthor().getEmail(),
+                        event.getAuthor().getAvatarUrl(),
+                        event.getAuthor().getGender()),
                 event.getLocale(),
-                event.getCategory()
+                event.getCategory(),
+                event.getAddress()
         );
     }
 

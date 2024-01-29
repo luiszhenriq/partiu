@@ -1,9 +1,10 @@
 package br.com.luis.partiu.dto.event;
 
 
+import br.com.luis.partiu.dto.user.UserViewDto;
+import br.com.luis.partiu.models.Address;
 import br.com.luis.partiu.models.Category;
 import br.com.luis.partiu.models.Locale;
-import br.com.luis.partiu.models.User;
 
 import java.util.UUID;
 
@@ -15,8 +16,9 @@ public record EventResponseDto(
         String startAt,
         String endsIn,
         Integer fee,
-        User author,
+        UserViewDto author,
         Locale locale,
-        Category category
+        Category category,
+        Address address
        ) {
 }

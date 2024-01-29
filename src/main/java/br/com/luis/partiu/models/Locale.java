@@ -22,9 +22,11 @@ public class Locale {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-   private String city;
+    @Column(nullable = false)
+    private String city;
 
-   private String state;
+    @Column(nullable = false)
+    private String state;
 
     public Locale(LocaleRequestDto localeDto) {
         this.city = localeDto.city();

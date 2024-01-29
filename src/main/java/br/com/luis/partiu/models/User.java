@@ -27,14 +27,16 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "avatar_url")
+    @Column(name = "avatar_url", nullable = false)
     private String avatarUrl;
 
     @Enumerated(EnumType.STRING)

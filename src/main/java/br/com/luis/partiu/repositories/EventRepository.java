@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface EventRepository extends JpaRepository<Event, UUID> {
@@ -24,5 +25,8 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             @Param("name") String name,
             Pageable pageable
     );
+
+    @Query("SELECT e FROM Event e WHERE e.startAt BETWEEN :startDate AND :endDate")
+    Page<Event> findEventsByDateRange(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
 }

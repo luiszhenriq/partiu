@@ -1,6 +1,7 @@
 package br.com.luis.partiu.controller;
 
 
+import br.com.luis.partiu.dto.event.DateRangeRequest;
 import br.com.luis.partiu.dto.event.EventRequestDto;
 import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
@@ -31,19 +32,24 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<EventResponseDto>> getEvents(
+    public ResponseEntity<Page<EventResponseDto>> getAllEventsOrWithFilters(
             Pageable pageable,
             @RequestParam(name = "fee", required = false) Integer fee,
             @RequestParam(name = "city", required = false) String city,
             @RequestParam(name = "state", required = false) String state,
             @RequestParam(name = "name", required = false) String name) {
-        return new ResponseEntity<>(service.getEvents(fee, city, state, name, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(service.getAllEventsOrWithFilters(fee, city, state, name, pageable), HttpStatus.OK);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<EventResponseDto> getById(@PathVariable("id") UUID id) {
         return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/date")
+    public ResponseEntity<Page<EventResponseDto>> getEventsByDateRange (@RequestBody DateRangeRequest date, Pageable pageable) {
+        return new ResponseEntity<>(service.getEventsByDateRange(date, pageable), HttpStatus.OK);
     }
 
 

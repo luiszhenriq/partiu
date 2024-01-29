@@ -1,25 +1,14 @@
 package br.com.luis.partiu.models;
 
 
+import br.com.luis.partiu.dto.address.AddressDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.UUID;
-
-@Entity
-@Table(name = "address")
-@Getter
-@Setter
-@AllArgsConstructor
+@Embeddable
+@Data
 @NoArgsConstructor
 public class Address {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
 
     private String street;
 
@@ -29,7 +18,11 @@ public class Address {
 
     private String ref;
 
-    @OneToOne
-    private Event event;
+    public Address(AddressDto addressDto) {
+        this.street = addressDto.street();
+        this.neighborhood = addressDto.neighborhood();
+        this.zipCode = addressDto.zipCode();
+        this.ref = addressDto.ref();
+    }
 
 }

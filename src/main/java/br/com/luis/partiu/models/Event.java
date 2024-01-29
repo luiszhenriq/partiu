@@ -23,19 +23,23 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
 
     private String description;
 
-    @Column(name = "cover_url")
+    @Column(name = "cover_url", nullable = false)
     private String coverUrl;
 
-    @Column(name = "start_at")
+    @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
-    @Column(name = "ends_in")
+    @Column(name = "ends_in", nullable = false)
     private LocalDateTime endsIn;
 
+    @Column(nullable = false)
     private Integer fee;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -43,7 +47,7 @@ public class Event {
     private User author;
 
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "event", fetch = FetchType.EAGER)
+    @Embedded
     private Address address;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -63,5 +67,4 @@ public class Event {
         this.endsIn = eventDto.endsIn();
         this.fee = eventDto.fee();
     }
-
 }
