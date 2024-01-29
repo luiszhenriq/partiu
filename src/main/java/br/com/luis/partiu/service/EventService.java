@@ -1,10 +1,10 @@
 package br.com.luis.partiu.service;
-import br.com.luis.partiu.dto.address.AddressDto;
 import br.com.luis.partiu.dto.event.DateRangeRequest;
 import br.com.luis.partiu.dto.event.EventRequestDto;
 import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
 import br.com.luis.partiu.dto.user.UserViewDto;
+import br.com.luis.partiu.infra.exceptions.IdNotFoundException;
 import br.com.luis.partiu.models.*;
 import br.com.luis.partiu.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +38,13 @@ public class EventService {
     public EventResponseDto createEvent(EventRequestDto eventDto) {
 
         User author = userRepository.findById(eventDto.authorId())
-                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+                .orElseThrow(() -> new IdNotFoundException("Id do autor não encontrado"));
 
         Locale locale = localeRepository.findById(eventDto.localeId())
-                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+                .orElseThrow(() -> new IdNotFoundException("Id da localidade não encontrado"));
 
         Category category = categoryRepository.findById(eventDto.categoryId())
-                .orElseThrow(() -> new RuntimeException("Id não encontrado"));
+                .orElseThrow(() -> new IdNotFoundException("Id da categoria não encontrado"));
 
         Event newEvent = new Event(eventDto);
 
@@ -75,7 +75,7 @@ public class EventService {
     public EventResponseDto updateEvent(UUID id, UpdateEventDto updateEventDto) {
 
         Event event = repository.findById(id).
-                orElseThrow(()-> new RuntimeException("Id não foi encontrado"));
+                orElseThrow(()-> new IdNotFoundException("Id não foi encontrado"));
 
         event.setTitle(updateEventDto.title());
         event.setDescription(updateEventDto.description());
@@ -96,7 +96,7 @@ public class EventService {
 
     public EventResponseDto getById(UUID id) {
         Event event = repository.findById(id).
-                orElseThrow(()-> new RuntimeException("Id não foi encontrado"));
+                orElseThrow(()-> new IdNotFoundException("Id não foi encontrado"));
 
         return eventResponseDto(event);
 

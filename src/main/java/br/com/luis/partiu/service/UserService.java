@@ -5,7 +5,8 @@ import br.com.luis.partiu.dto.user.UserLoginRequestDto;
 import br.com.luis.partiu.dto.user.UserRegisterDto;
 import br.com.luis.partiu.dto.user.UserResponseDto;
 import br.com.luis.partiu.dto.user.UserUpdateDto;
-import br.com.luis.partiu.infra.TokenService;
+import br.com.luis.partiu.infra.exceptions.IdNotFoundException;
+import br.com.luis.partiu.infra.security.TokenService;
 import br.com.luis.partiu.models.Gender;
 import br.com.luis.partiu.models.User;
 import br.com.luis.partiu.repositories.UserRepository;
@@ -64,7 +65,7 @@ public class UserService {
 
     public UserResponseDto updateUser(UUID id, UserUpdateDto updateDto) {
         User user = repository.findById(id).
-                orElseThrow(() -> new RuntimeException("Id não encontrado"));
+                orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
 
         user.setAvatarUrl(updateDto.avatarUrl());
 
@@ -87,7 +88,7 @@ public class UserService {
 
     public UserResponseDto getById(UUID id) {
         User user = repository.findById(id).
-                orElseThrow(() -> new RuntimeException("Id não encontrado"));
+                orElseThrow(() -> new IdNotFoundException("Id não encontrado"));
 
         return new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getPassword(),
                 user.getGender());

@@ -1,4 +1,4 @@
-package br.com.luis.partiu.infra;
+package br.com.luis.partiu.infra.security;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,10 +5,11 @@ import br.com.luis.partiu.dto.user.UserLoginRequestDto;
 import br.com.luis.partiu.dto.user.UserRegisterDto;
 import br.com.luis.partiu.dto.user.UserResponseDto;
 import br.com.luis.partiu.dto.user.UserUpdateDto;
-import br.com.luis.partiu.infra.TokenJWT;
+import br.com.luis.partiu.infra.security.TokenJWT;
 import br.com.luis.partiu.models.Gender;
 import br.com.luis.partiu.service.UserService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,20 +32,20 @@ public class UserController {
 
     @PostMapping("/register")
     @Transactional
-    public ResponseEntity<UserResponseDto> register(@RequestBody UserRegisterDto userRegisterDto) {
+    public ResponseEntity<UserResponseDto> register(@RequestBody @Valid UserRegisterDto userRegisterDto) {
         return new ResponseEntity<>(service.register(userRegisterDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     @Transactional
-    public ResponseEntity<TokenJWT> login(@RequestBody UserLoginRequestDto userDto) {
+    public ResponseEntity<TokenJWT> login(@RequestBody @Valid UserLoginRequestDto userDto) {
         String tokenJWT = service.login(userDto);
         return ResponseEntity.ok(new TokenJWT(tokenJWT));
     }
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") UUID id, @RequestBody UserUpdateDto updateDto) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("id") UUID id, @RequestBody @Valid UserUpdateDto updateDto) {
         return new ResponseEntity<>(service.updateUser(id, updateDto), HttpStatus.OK);
     }
 

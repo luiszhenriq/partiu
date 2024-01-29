@@ -7,6 +7,7 @@ import br.com.luis.partiu.dto.event.EventResponseDto;
 import br.com.luis.partiu.dto.event.UpdateEventDto;
 import br.com.luis.partiu.service.EventService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class EventController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<EventResponseDto> createEvent(@RequestBody EventRequestDto eventDto) {
+    public ResponseEntity<EventResponseDto> createEvent(@RequestBody @Valid EventRequestDto eventDto) {
         return new ResponseEntity<>(service.createEvent(eventDto), HttpStatus.CREATED);
     }
 
@@ -48,14 +49,14 @@ public class EventController {
     }
 
     @GetMapping("/date")
-    public ResponseEntity<Page<EventResponseDto>> getEventsByDateRange (@RequestBody DateRangeRequest date, Pageable pageable) {
+    public ResponseEntity<Page<EventResponseDto>> getEventsByDateRange (@RequestBody @Valid DateRangeRequest date, Pageable pageable) {
         return new ResponseEntity<>(service.getEventsByDateRange(date, pageable), HttpStatus.OK);
     }
 
 
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<EventResponseDto> updateEvent(@PathVariable("id") UUID id, @RequestBody UpdateEventDto updateEventDto) {
+    public ResponseEntity<EventResponseDto> updateEvent(@PathVariable("id") UUID id, @RequestBody @Valid UpdateEventDto updateEventDto) {
         return new ResponseEntity<>(service.updateEvent(id, updateEventDto), HttpStatus.OK);
     }
 
