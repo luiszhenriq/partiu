@@ -3,6 +3,7 @@ package br.com.luis.partiu.service;
 
 import br.com.luis.partiu.dto.locale.LocaleRequestDto;
 import br.com.luis.partiu.dto.locale.LocaleResponseDto;
+import br.com.luis.partiu.infra.exceptions.IdNotFoundException;
 import br.com.luis.partiu.models.Locale;
 import br.com.luis.partiu.repositories.LocaleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class LocaleService {
     public LocaleResponseDto getById(UUID id) {
 
         Locale locale = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("id não encontrado"));
+                .orElseThrow(() -> new IdNotFoundException("id não encontrado"));
 
         return new LocaleResponseDto(locale.getId(), locale.getCity(), locale.getState());
     }
@@ -46,7 +47,7 @@ public class LocaleService {
     public LocaleResponseDto updateLocale(UUID id, LocaleRequestDto localeDto) {
 
         Locale locale = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("id não encontrado"));
+                .orElseThrow(() -> new IdNotFoundException("id não encontrado"));
 
         locale.setCity(localeDto.city());
         locale.setState(localeDto.state());
